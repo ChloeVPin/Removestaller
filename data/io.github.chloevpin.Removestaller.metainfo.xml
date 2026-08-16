@@ -32,6 +32,25 @@
     <keyword>package</keyword>
   </keywords>
 
+  <screenshots>
+    <screenshot type="default">
+      <caption>Browse installed applications by package source</caption>
+      <image type="source" width="910" height="750">https://raw.githubusercontent.com/ChloeVPin/Removestaller/main/data/screenshots/overview.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Review an application's package details before removal</caption>
+      <image type="source" width="910" height="750">https://raw.githubusercontent.com/ChloeVPin/Removestaller/main/data/screenshots/application-details.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Confirm removal before making changes</caption>
+      <image type="source" width="910" height="750">https://raw.githubusercontent.com/ChloeVPin/Removestaller/main/data/screenshots/removal-confirmation.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>View application details and license information</caption>
+      <image type="source" width="910" height="750">https://raw.githubusercontent.com/ChloeVPin/Removestaller/main/data/screenshots/about.png</image>
+    </screenshot>
+  </screenshots>
+
   <content_rating type="oars-1.1" />
 
   <releases>
