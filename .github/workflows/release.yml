@@ -1,0 +1,122 @@
+name: Release packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  packages:
+    name: Build release packages
+    runs-on: ubuntu-26.04
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install Debian build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            appstream \
+            desktop-file-utils \
+            dpkg-dev \
+            libadwaita-1-dev \
+            libgtk-4-dev \
+            meson \
+            ninja-build \
+            pkg-config
+
+      - name: Select stable Rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+
+      - name: Determine release version
+        id: version
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          version="${TAG_NAME#v}"
+          printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build Debian staging tree
+        env:
+          BUILD_DIR: ${{ runner.temp }}/removestaller-deb-build
+          STAGE_DIR: ${{ runner.temp }}/removestaller-deb-stage
+        run: |
+          meson setup "$BUILD_DIR" --buildtype=release --prefix=/usr
+          meson compile -C "$BUILD_DIR"
+          DESTDIR="$STAGE_DIR" meson install -C "$BUILD_DIR" --no-rebuild
+          desktop-file-validate "$STAGE_DIR/usr/share/applications/io.github.chloevpin.Removestaller.desktop"
+          appstreamcli validate "$STAGE_DIR/usr/share/metainfo/io.github.chloevpin.Removestaller.metainfo.xml"
+
+      - name: Build Debian package
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          STAGE_DIR: ${{ runner.temp }}/removestaller-deb-stage
+        run: |
+          mkdir -p dist
+          packaging/build-deb.sh "$VERSION" "$STAGE_DIR" "$GITHUB_WORKSPACE/dist"
+
+      - name: Build Fedora RPM in Fedora 44
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          host_uid=$(id -u)
+          host_gid=$(id -g)
+          docker run --rm \
+            --env HOST_GID="$host_gid" \
+            --env HOST_UID="$host_uid" \
+            --env VERSION \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace \
+            fedora:44 \
+            bash -euc '
+              dnf install --assumeyes --setopt=install_weak_deps=False \
+                appstream \
+                cargo \
+                desktop-file-utils \
+                gcc \
+                gtk4-devel \
+                libadwaita-devel \
+                meson \
+                ninja-build \
+                pkgconf-pkg-config \
+                rpm-build
+              build_dir=/tmp/removestaller-rpm-build
+              stage_dir=/workspace/dist/rpm-stage
+              rm -rf "$build_dir" "$stage_dir"
+              meson setup "$build_dir" --buildtype=release --prefix=/usr
+              meson compile -C "$build_dir"
+              DESTDIR="$stage_dir" meson install -C "$build_dir" --no-rebuild
+              desktop-file-validate "$stage_dir/usr/share/applications/io.github.chloevpin.Removestaller.desktop"
+              appstreamcli validate "$stage_dir/usr/share/metainfo/io.github.chloevpin.Removestaller.metainfo.xml"
+              packaging/build-rpm.sh "$VERSION" "$stage_dir" /workspace/dist
+              chown -R "$HOST_UID:$HOST_GID" /workspace/dist
+            '
+          rm -rf dist/rpm-stage
+
+      - name: Create checksums
+        run: sha256sum dist/*.deb dist/*.rpm > dist/SHA256SUMS
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: removestaller-${{ github.ref_name }}
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --verify-tag \
+            --title "Removestaller $VERSION" \
+            --generate-notes \
+            dist/*.deb dist/*.rpm dist/SHA256SUMS

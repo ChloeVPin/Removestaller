@@ -11,6 +11,10 @@
     <name>chloevpin</name>
   </developer>
 
+  <url type="homepage">https://github.com/ChloeVPin/Removestaller</url>
+  <url type="bugtracker">https://github.com/ChloeVPin/Removestaller/issues</url>
+  <url type="vcs-browser">https://github.com/ChloeVPin/Removestaller</url>
+
   <description>
     <p>Removestaller removes installed applications from supported package formats through one interface.</p>
   </description>
@@ -27,6 +31,8 @@
     <keyword>remove</keyword>
     <keyword>package</keyword>
   </keywords>
+
+  <content_rating type="oars-1.1" />
 
   <releases>
     <release version="1.0.0" date="2026-08-16" />
