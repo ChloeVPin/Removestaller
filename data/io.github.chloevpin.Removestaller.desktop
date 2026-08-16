@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Removestaller
+Comment=Remove installed applications
+Exec=removestaller
+Icon=io.github.chloevpin.Removestaller
+Terminal=false
+Categories=System;
+Keywords=uninstall;remove;package;software;
+StartupNotify=true
+DBusActivatable=true

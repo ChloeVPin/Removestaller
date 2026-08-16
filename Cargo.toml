@@ -1,0 +1,15 @@
+[package]
+name = "removestaller"
+version = "1.0.0"
+edition = "2021"
+authors = ["chloevpin"]
+license = "GPL-3.0-or-later"
+description = "Remove installed applications from multiple package formats."
+
+[dependencies]
+gtk4 = { version = "0.11", features = ["v4_10"] }
+libadwaita = { version = "0.9", features = ["v1_5"] }
+
+[profile.release]
+strip = true
+lto = true

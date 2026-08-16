@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.chloevpin.Removestaller</id>
+  <name>Removestaller</name>
+  <summary>Remove installed applications</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <developer id="io.github.chloevpin">
+    <name>chloevpin</name>
+  </developer>
+
+  <description>
+    <p>Removestaller removes installed applications from supported package formats through one interface.</p>
+  </description>
+
+  <launchable type="desktop-id">io.github.chloevpin.Removestaller.desktop</launchable>
+  <icon type="stock">io.github.chloevpin.Removestaller</icon>
+
+  <categories>
+    <category>System</category>
+  </categories>
+
+  <keywords>
+    <keyword>uninstall</keyword>
+    <keyword>remove</keyword>
+    <keyword>package</keyword>
+  </keywords>
+
+  <releases>
+    <release version="1.0.0" date="2026-08-16" />
+  </releases>
+</component>
