@@ -13,7 +13,7 @@ use gtk::gio;
 
 const APP_ID: &str = "io.github.chloevpin.Removestaller";
 const APP_NAME: &str = "Removestaller";
-const APP_VERSION: &str = "1.0.1";
+const APP_VERSION: &str = "1.0.2";
 
 fn main() -> gtk::glib::ExitCode {
     let app = adw::Application::builder().application_id(APP_ID).build();

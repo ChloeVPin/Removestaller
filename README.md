@@ -2,7 +2,7 @@
 
 Removestaller is a minimal GTK4 and libadwaita application for removing installed applications from supported Linux package formats.
 
-Version: 1.0.1
+Version: 1.0.2
 
 ## Build
 
